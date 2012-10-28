@@ -8,9 +8,10 @@ class Evernote_OAuth extends KISS_OAuth_v1 {
 	function  __construct( $api="evernote", $url=EVERNOTE_SERVER ) {
 		
 		$this->url = array(
-			'authorize' 		=> $url ."/OAuth.action", 
+			'authorize' 			=> $url ."/OAuth.action", 
 			'request_token' 	=> $url ."/oauth", 
-			'access_token' 		=> $url ."/oauth", 
+			'access_token' 	=> $url ."/oauth", 
+			'oauth_callback' 	=> url("/oauth/api/evernote")
 		);
 		
 		parent::__construct( $api, $url );
