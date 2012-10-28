@@ -14,7 +14,7 @@ class Evernote_OAuth extends KISS_OAuth_v1 {
 			'oauth_callback' 	=> url("/oauth/api/evernote")
 		);
 		
-		parent::__construct( $api, $url );
+		parent::__construct( $api, $url, "PLAINTEXT" );
 		
 	}
 	
