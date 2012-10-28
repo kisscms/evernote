@@ -2,8 +2,7 @@
 
 // Include the Evernote API from the lib subdirectory. 
 // $evernote_sdk simply contains the contents of /php/lib from the Evernote API SDK
-
-$evernote_sdk = SDK. "evernote/1.22/";
+$GLOBALS['THRIFT_ROOT'] = $evernote_sdk = SDK. "evernote/1.22/";
 
 require_once($evernote_sdk ."autoload.php");
 require_once($evernote_sdk ."Thrift.php");
