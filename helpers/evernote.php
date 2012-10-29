@@ -35,8 +35,6 @@ class Evernote {
 		//$_SESSION['cache']['evernote']['user']['store']
 		if( empty($_SESSION['cache_evernote_user_store']) ){
 			
-			var_dump($this->config['host']);
-			
 			$client = new THttpClient($this->config['host'], $this->config['port'], "/edam/user", $this->config['protocol']);
 			$protocol = new TBinaryProtocol($client);
 			$store = new UserStoreClient($protocol, $protocol);
