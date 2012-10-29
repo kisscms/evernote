@@ -63,6 +63,9 @@ class Evernote {
 			case "notes":
 				$results = $this->getNotes($params);
 			break;
+			case "resource":
+				$results = $this->getResource($params);
+			break;
 			
 		}
 		
@@ -123,9 +126,16 @@ class Evernote {
   
 	function getNotes($params){
 		
-		// params
+		// variables
 		$results = array();
 		
+		// default params
+		$defaults = array(
+				'resources' => false, 
+				'recognition' => false, 
+				'alternateData' => false
+		);
+			
 		try {
 				
 			$token = $this->creds['oauth_token'];
@@ -141,25 +151,32 @@ class Evernote {
 			$filter = new \EDAM\NoteStore\NoteFilter();
 			$filter->notebookGuid = $params['guid'];
 			
+			// merge given params with defaults	   
+			$options = array_merge($defaults,  $params);
+			
 			$notes = $store->findNotes($token, $filter, 0, 100); // Fetch up to 100 notes
 			  if (!empty($notes->notes)) {
 					  foreach ($notes->notes as $note) {
 							  // findNotes gets note metadata, but not the actual content
-							  // To get the content, we load the note itself (but not attached resources in this example)
-							  $result = $store->getNote($token, $note->guid, true, true, false, false);
+							  // To get the content, we load the note itself (with content but no attached resources)
+							  $result = (array) $store->getNote($token, $note->guid, true, $options['resources'], $options['recognition'], $options['alternateData']);
 							  // get the media resoutces for the note
-							  $resources = $result->resources;
-								if (!empty($resources)) {
-										foreach ($resources as $resource) {
+							  $resources = $result['resources'];
+							  /*		
+							  if (!empty($resources)) {
+										foreach ($resources as $k=>$resource) {
 												$media = array();
 												// get the raw binary attachment, which could be an image, audio file, etc
 												$media['bytes'] = $resource->data->body;
+												echo base64_decode($media['bytes']);
 												$media['type'] = $resource->mime;
-												// add to the results list
-												$result['resources'][] = $media;
+												// add to the results list 
+												$result['resources'][$k] = $media;
 										}
 								}
+								*/
 								$results[] = $result;
+								
 					  }
 			  }
 			 
@@ -170,6 +187,33 @@ class Evernote {
 		}
 		 
 		return false;
+	}
+	
+	// return a specific resource
+	function getResource($params){
+			
+		try {
+				
+			$token = $this->creds['oauth_token'];
+			$user = $this->me();
+			
+			$noteStoreUrl = $user->getNoteStoreUrl($token);
+			$parts = parse_url($noteStoreUrl);
+			
+			$client = new THttpClient($this->config['host'], $this->config['port'], $parts['path'], $this->config['protocol']);
+			$protocol = new TBinaryProtocol($client);
+			$store = new NoteStoreClient($protocol, $protocol);
+			
+			$resource = $store->getResource($token, $params['guid'], true, false, false, false);
+			
+			return $resource;
+			
+		 } catch (Exception $e) {
+			var_dump( 'Error getting resource: ' . $e->getMessage() );
+		}
+		 
+		return false;
+		
 	}
 	
 }
