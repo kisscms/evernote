@@ -32,9 +32,8 @@ class Evernote {
 	
 	// check if we have a valid login
 	public static  function login(){
-		
-		// in case we are call this as a static method
-		$self = ( empty( $this->oauth ) ) ? new Evernote(): $this;
+		// as a static method there is no context of $this
+		$self = new Evernote();
 		
 		// get/update the creds
 		$self->creds = $self->oauth->creds();
@@ -89,6 +88,19 @@ class Evernote {
 	}
 
 	function  post() {
+		
+		//...
+		switch( $type ){
+			case "notebook":
+				$results = $this->postNotebook($params);
+			break;
+			case "note":
+				$results = $this->postNote($params);
+			break;
+			
+		}
+		
+		return $results;
 		
 	}
 	
@@ -231,6 +243,111 @@ class Evernote {
 		
 	}
 	
+	
+	function postNotebook( $params ){
+		
+	}
+	
+	// NOT TESTED!
+	function postNote( $params ){
+		
+		// To create a new note, simply create a new Note object and fill in 
+		// attributes such as the note's title.
+		$note = new Note();
+		$note->title = $params['title'];
+		
+		// To include an attachment such as an image in a note, first create a Resource
+		// for the attachment. At a minimum, the Resource contains the binary attachment 
+		// data, an MD5 hash of the binary data, and the attachment MIME type. It can also 
+		// include attributes such as filename and location.
+		$filename = $params['file'];
+		$image = fread(fopen($filename, "rb"), filesize($filename));
+		$hash = md5($image, 1);
+		
+		$data = new Data();
+		$data->size = strlen($image);
+		$data->bodyHash = $hash;
+		$data->body = $image;
+		
+		// The content of an Evernote note is represented using Evernote Markup Language
+		// (ENML). The full ENML specification can be found in the Evernote API Overview
+		// at http://dev.evernote.com/documentation/cloud/chapters/ENML.php
+		$note->content =
+		  '<?xml version="1.0" encoding="UTF-8"?>' .
+		  '<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">' .
+		  '<en-note>Here is the content:<br/>';
+		
+		// When note titles are user-generated, it's important to validate them
+		$len = strlen($note->title);
+		$min = $GLOBALS['EDAM_Limits_Limits_CONSTANTS']['EDAM_NOTE_TITLE_LEN_MIN'];
+		$max = $GLOBALS['EDAM_Limits_Limits_CONSTANTS']['EDAM_NOTE_TITLE_LEN_MAX'];
+		$pattern = '#' . $GLOBALS['EDAM_Limits_Limits_CONSTANTS']['EDAM_NOTE_TITLE_REGEX'] . '#'; // Add PCRE delimiters
+		if ($len < $min || $len > $max || !preg_match($pattern, $note->title)) {
+		  print "\nInvalid note title: " . $note->title . '\n\n';
+		  exit(1);
+		}
+		
+		if($params['resources']){ 
+			
+			foreach( $params['resources'] as $params ){ 
+				$resource = $this->postResource( $params ); 
+				// Now, add the new Resource to the note's list of resources
+				$note->resources = array( $resource );
+				
+				$note->content .= '<en-media type="image/png" hash="' . $hashHex . '"/>';
+			}
+			
+		}
+		// To display the Resource as part of the note's content, include an <en-media>
+		// tag in the note's ENML content. The en-media tag identifies the corresponding
+		// Resource using the MD5 hash.
+		$hashHex = md5($resource, 0);
+		
+		// complete the note...
+		$note->content .= '</en-note>';
+		  
+		// Finally, send the new note to Evernote using the createNote method
+		// The new Note object that is returned will contain server-generated
+		// attributes such as the new note's unique GUID.
+		$createdNote = $noteStore->createNote($authToken, $note);
+		
+		// send back the guid
+		return $createdNote->guid;
+
+	}
+	
+	// NOT TESTED!
+	// resource is posted as part of a note...
+	function postResource( $params ){
+		
+		// if there is no file, exit now
+		if( empty( $params['file'] ) ) return;
+		
+		$resource = new Resource();
+		$resource->mime = $params['mime']; //ex. "image/png"
+		$resource->data = $data;
+		$resource->attributes = new ResourceAttributes();
+		$resource->attributes->fileName = $filename;
+		
+		return $resource;
+	}
+	
+
+	// A 'specialized' exception handler for our program so that error messages all go to the console
+	function en_exception_handler($exception) {
+		echo "Uncaught " . get_class($exception) . ":\n";
+		if ($exception instanceof EDAMUserException) {
+			echo "Error code: " . EDAMErrorCode::$__names[$exception->errorCode] . "\n";
+			echo "Parameter: " . $exception->parameter . "\n";
+		} else if ($exception instanceof EDAMSystemException) {
+			echo "Error code: " . EDAMErrorCode::$__names[$exception->errorCode] . "\n";
+			echo "Message: " . $exception->message . "\n";
+		} else {
+			echo $exception;
+		}
+	}
+	// Usage: set_exception_handler('en_exception_handler');
+
 }
 
 ?>
