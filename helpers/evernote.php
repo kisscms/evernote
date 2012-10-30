@@ -27,6 +27,23 @@ class Evernote {
 		// get/update the creds
 		$this->creds = $this->oauth->creds();
 		
+		return $this;
+	}
+	
+	// check if we have a valid login
+	public static  function login(){
+		
+		// in case we are call this as a static method
+		$self = ( empty( $this->oauth ) ) ? new Evernote(): $this;
+		
+		// get/update the creds
+		$self->creds = $self->oauth->creds();
+		
+		$valid = ( !empty($self->creds) && empty($self->creds['oauth_callback_confirmed']) );
+		
+		// return the state
+		return $valid;
+	
 	}
 	
 	// get the logged in user object
