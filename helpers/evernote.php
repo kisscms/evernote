@@ -46,7 +46,9 @@ class Evernote {
 	}
 	
     function me(){
-        
+        $token = $this->creds['oauth_token'];
+		$user = $this->getUserStore();
+        return $user->getUser($token);
     }
     
 	// REST methods
