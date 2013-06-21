@@ -9,7 +9,7 @@ use EDAM\Error\EDAMSystemException, EDAM\Error\EDAMUserException, EDAM\Error\EDA
 class Evernote {
 	
 	private $api;
-	private $oauth;
+	public $oauth;
 	private $config;
 	private $creds;
 	private $store;
