@@ -20,7 +20,7 @@ class Evernote {
 		$this->api = EVERNOTE_SERVER;
 		
 		// load all the necessery subclasses
-		$this->oauth = new Evernote_OAuth();
+		$this->init();
 		
 		$this->config = $GLOBALS['config']['evernote'];
 		
@@ -43,6 +43,12 @@ class Evernote {
 		// return the state
 		return $valid;
 	
+	}
+	
+	function init(){
+		// load all the necessery subclasses
+		$this->oauth = new Evernote_OAuth();
+		
 	}
 	
     function me(){
