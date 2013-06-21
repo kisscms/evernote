@@ -45,26 +45,10 @@ class Evernote {
 	
 	}
 	
-	// get the logged in user object
-	function  me(){
-		// check cache first?
-		//$_SESSION['cache']['evernote']['user']['store']
-		if( empty($_SESSION['cache_evernote_user_store']) ){
-			
-			$client = new THttpClient($this->config['host'], $this->config['port'], "/edam/user", $this->config['protocol']);
-			$protocol = new TBinaryProtocol($client);
-			$store = new UserStoreClient($protocol, $protocol);
-			// save to session
-			$_SESSION['cache_evernote_user_store'] = $store;
-			
-		} else {
-			$store = $_SESSION['cache_evernote_user_store'];
-		}
-		
-		return $store;
-		
-	}
-	
+    function me(){
+        
+    }
+    
 	// REST methods
 	function  get( $type="", $params=array() ){
 		
@@ -113,12 +97,32 @@ class Evernote {
 	}
 	
 	
+	// get the logged in user object
+	function getUserStore(){
+		// check cache first?
+		//$_SESSION['cache']['evernote']['user']['store']
+		if( empty($_SESSION['cache_evernote_user_store']) ){
+			
+			$client = new THttpClient($this->config['host'], $this->config['port'], "/edam/user", $this->config['protocol']);
+			$protocol = new TBinaryProtocol($client);
+			$store = new UserStoreClient($protocol, $protocol);
+			// save to session
+			$_SESSION['cache_evernote_user_store'] = $store;
+			
+		} else {
+			$store = $_SESSION['cache_evernote_user_store'];
+		}
+		
+		return $store;
+		
+	}
+	
 	// Helpers
 	function getNotebooks($params) {
 		
 		// params
 		$token = $this->creds['oauth_token'];
-		$user = $this->me();
+		$user = $this->getUserStore();
 		
 		$noteStoreUrl = $user->getNoteStoreUrl($token);
 		$parts = parse_url($noteStoreUrl);
@@ -166,7 +170,7 @@ class Evernote {
 		try {
 				
 			$token = $this->creds['oauth_token'];
-			$user = $this->me();
+			$user = $this->getUserStore();
 			
 			$noteStoreUrl = $user->getNoteStoreUrl($token);
 			$parts = parse_url($noteStoreUrl);
@@ -222,7 +226,7 @@ class Evernote {
 		try {
 				
 			$token = $this->creds['oauth_token'];
-			$user = $this->me();
+			$user = $this->getUserStore();
 			
 			$noteStoreUrl = $user->getNoteStoreUrl($token);
 			$parts = parse_url($noteStoreUrl);
