@@ -60,7 +60,7 @@ class Evernote {
 	// REST methods
 	function  get( $type="", $params=array() ){
 		// exit now if there are no credentials
-		if( empty( $this->creds ) ) return;
+		if( empty( $this->creds ) ) return false;
 		
 		// check cache before....
 		//...
@@ -83,7 +83,7 @@ class Evernote {
 
 	function  post() {
 		// exit now if there are no credentials
-		if( empty( $this->creds ) ) return;
+		if( empty( $this->creds ) ) return false;
 		
 		//...
 		switch( $type ){
@@ -102,13 +102,13 @@ class Evernote {
 	
 	function  put() {
 		// exit now if there are no credentials
-		if( empty( $this->creds ) ) return;
+		if( empty( $this->creds ) ) return false;
 		
 	}
 	
 	function  delete() {
 		// exit now if there are no credentials
-		if( empty( $this->creds ) ) return;
+		if( empty( $this->creds ) ) return false;
 		
 	}
 	
