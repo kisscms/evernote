@@ -19,13 +19,10 @@ class Evernote {
 		// main URL
 		$this->api = EVERNOTE_SERVER;
 		
-		// load all the necessery subclasses
-		$this->init();
-		
 		$this->config = $GLOBALS['config']['evernote'];
 		
-		// get/update the creds
-		$this->creds = $this->oauth->creds();
+		// load all the necessery subclasses
+		$this->init();
 		
 		return $this;
 	}
@@ -49,6 +46,9 @@ class Evernote {
 		// load all the necessery subclasses
 		$this->oauth = new Evernote_OAuth();
 		
+		// get/update the creds
+		$this->creds = $this->oauth->creds();
+
 	}
 	
     function me(){
