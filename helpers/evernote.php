@@ -29,14 +29,12 @@ class Evernote {
 	}
 
 	// check if we have a valid login
-	public static  function login(){
-		// as a static method there is no context of $this
-		$self = new Evernote();
+	public function login(){
 
 		// get/update the creds
-		$self->creds = $self->oauth->creds();
+		$this->creds = $this->oauth->creds();
 
-		$valid = ( !empty($self->creds) && empty($self->creds['oauth_callback_confirmed']) );
+		$valid = ( !empty($this->creds) && empty($this->creds['oauth_callback_confirmed']) );
 
 		// return the state
 		return $valid;
@@ -163,7 +161,7 @@ class Evernote {
 		// prerequisites
 		if( !$this->client ) return;
 		// params
-		$token = $this->creds['oauth_token'];
+		//$token = $this->creds['oauth_token'];
 		//$user = $this->getUserStore();
 
 		//$noteStoreUrl = $user->getNoteStoreUrl($token);
@@ -171,9 +169,12 @@ class Evernote {
 
 		//$client = new Evernote\Client(array('token' => $token, 'serviceHost' => $this->config['host']));
 		$store = $this->getNoteStore();
+		$result = array();
 
 		try {
-			$notebooks = $store->listNotebooks( $token );
+
+			$notebooks = $store->listNotebooks();
+
 			$result = array();
 			if (!empty($notebooks)) {
 				foreach ($notebooks as $notebook) {
@@ -192,9 +193,9 @@ class Evernote {
 		} catch (EDAMNotFoundException $e) {
 			var_dump( $e->getMessage() );
 		} catch (Exception $e) {
-			var_dump( 'Error listing notebooks: ' . $e->getMessage() );
+			//var_dump( 'Error listing notebooks: ' . $e->getMessage() );
 		}
-		return false;
+		return $result;
 	}
 
 	function getNotes($params){
