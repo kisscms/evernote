@@ -113,6 +113,29 @@ class Evernote {
 
 	}
 
+	// Stores
+	function store(){
+		// a switch/case...
+	}
+
+	function getNoteStore(){
+		// check cache first?
+		//$_SESSION['cache']['evernote']['note']['store']
+		if( empty($_SESSION['cache_evernote_note_store']) ){
+
+			$token = $this->creds['oauth_token'];
+			$client = new Evernote\Client( array('token' => $token, 'serviceHost' => $this->config['host']) );
+			$store = $client->getNoteStore();
+			// save to session
+			$_SESSION['cache_evernote_note_store'] = $store;
+
+		} else {
+			$store = $_SESSION['cache_evernote_note_store'];
+		}
+
+		return $store;
+
+	}
 
 	// get the logged in user object
 	function getUserStore(){
@@ -144,7 +167,7 @@ class Evernote {
 		//$parts = parse_url($noteStoreUrl);
 
 		$client = new Evernote\Client(array('token' => $token, 'serviceHost' => $this->config['host']));
-		$store = $client->getNoteStore();
+		$store = $this->getNoteStore();
 
 		try {
 			$notebooks = $store->listNotebooks( $token );
@@ -192,7 +215,7 @@ class Evernote {
 			//$parts = parse_url($noteStoreUrl);
 
 			$client = new Evernote\Client(array('token' => $token, 'serviceHost' => $this->config['host']));
-			$store = $client->getNoteStore();
+			$store = $this->getNoteStore();
 
 			$filter = new \EDAM\NoteStore\NoteFilter();
 			$filter->notebookGuid = $params['guid'];
@@ -247,7 +270,7 @@ class Evernote {
 			//$parts = parse_url($noteStoreUrl);
 
 			$client = new Evernote\Client(array('token' => $token, 'serviceHost' => $this->config['host']));
-			$store = $client->getNoteStore();
+			$store = $this->getNoteStore();
 
 			$resource = $store->getResource($token, $params['guid'], true, false, false, false);
 
