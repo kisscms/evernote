@@ -49,10 +49,15 @@ class Evernote {
 
 		// get/update the creds
 		$this->creds = $this->oauth->creds();
+		// create client
+		$token = ( is_array($this->creds) && array_key_exists('oauth_token', $this->creds) ) ? $this->creds['oauth_token'] : false;
+		$this->client = ( $token ) ? new Evernote\Client( array('token' => $token, 'serviceHost' => $this->config['host']) ) : false;
 
 	}
 
 	function me(){
+		// prerequisites
+		if( !$this->client ) return false;
 		$token = $this->creds['oauth_token'];
 		$user = $this->getUserStore();
 		return (array) $user->getUser($token);
@@ -123,9 +128,7 @@ class Evernote {
 		//$_SESSION['cache']['evernote']['note']['store']
 		if( empty($_SESSION['cache_evernote_note_store']) ){
 
-			$token = $this->creds['oauth_token'];
-			$client = new Evernote\Client( array('token' => $token, 'serviceHost' => $this->config['host']) );
-			$store = $client->getNoteStore();
+			$store = $this->client->getNoteStore();
 			// save to session
 			$_SESSION['cache_evernote_note_store'] = $store;
 
@@ -143,9 +146,7 @@ class Evernote {
 		//$_SESSION['cache']['evernote']['user']['store']
 		if( empty($_SESSION['cache_evernote_user_store']) ){
 
-			$token = $this->creds['oauth_token'];
-			$client = new Evernote\Client( array('token' => $token, 'serviceHost' => $this->config['host']) );
-			$store = $client->getUserStore();
+			$store = $this->client->getUserStore();
 			// save to session
 			$_SESSION['cache_evernote_user_store'] = $store;
 
@@ -159,6 +160,8 @@ class Evernote {
 
 	// Helpers
 	function getNotebooks($params) {
+		// prerequisites
+		if( !$this->client ) return;
 		// params
 		$token = $this->creds['oauth_token'];
 		//$user = $this->getUserStore();
@@ -166,7 +169,7 @@ class Evernote {
 		//$noteStoreUrl = $user->getNoteStoreUrl($token);
 		//$parts = parse_url($noteStoreUrl);
 
-		$client = new Evernote\Client(array('token' => $token, 'serviceHost' => $this->config['host']));
+		//$client = new Evernote\Client(array('token' => $token, 'serviceHost' => $this->config['host']));
 		$store = $this->getNoteStore();
 
 		try {
@@ -196,6 +199,8 @@ class Evernote {
 
 	function getNotes($params){
 
+		// prerequisites
+		if( !$this->client ) return;
 		// variables
 		$results = array();
 
@@ -214,7 +219,7 @@ class Evernote {
 			//$noteStoreUrl = $user->getNoteStoreUrl($token);
 			//$parts = parse_url($noteStoreUrl);
 
-			$client = new Evernote\Client(array('token' => $token, 'serviceHost' => $this->config['host']));
+			//$client = new Evernote\Client(array('token' => $token, 'serviceHost' => $this->config['host']));
 			$store = $this->getNoteStore();
 
 			$filter = new \EDAM\NoteStore\NoteFilter();
@@ -260,16 +265,18 @@ class Evernote {
 
 	// return a specific resource
 	function getResource($params){
+		// prerequisites
+		if( !$this->client ) return;
 
 		try {
 
-			$token = $this->creds['oauth_token'];
+			//$token = $this->creds['oauth_token'];
 			//$user = $this->getUserStore();
 
 			//$noteStoreUrl = $user->getNoteStoreUrl($token);
 			//$parts = parse_url($noteStoreUrl);
 
-			$client = new Evernote\Client(array('token' => $token, 'serviceHost' => $this->config['host']));
+			//$client = new Evernote\Client(array('token' => $token, 'serviceHost' => $this->config['host']));
 			$store = $this->getNoteStore();
 
 			$resource = $store->getResource($token, $params['guid'], true, false, false, false);
