@@ -1,6 +1,6 @@
 {
 	"name": "kisscms/evernote",
-	"version": "0.3.0",
+	"version": "0.4.0",
 	"type": "library",
 	"description": "Evernote for KISSCMS",
 	"keywords": ["evernote","kisscms"],
