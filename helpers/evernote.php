@@ -230,7 +230,7 @@ class Evernote {
 			$options = array_merge($defaults,  $params);
 
 			$notes = $store->findNotes($token, $filter, 0, 100); // Fetch up to 100 notes
-			  if (!empty($notes->notes)) {
+			if (!empty($notes->notes)) {
 					  foreach ($notes->notes as $note) {
 							  // findNotes gets note metadata, but not the actual content
 							  // To get the content, we load the note itself (with content but no attached resources)
@@ -258,7 +258,7 @@ class Evernote {
 			 return $results;
 
 		 } catch (Exception $e) {
-			var_dump( 'Error listing notebooks: ' . $e->getMessage() );
+			//var_dump( 'Error listing notebooks: ' . $e->getMessage() );
 		}
 
 		return false;
@@ -285,7 +285,7 @@ class Evernote {
 			return $resource;
 
 		 } catch (Exception $e) {
-			var_dump( 'Error getting resource: ' . $e->getMessage() );
+			//var_dump( 'Error getting resource: ' . $e->getMessage() );
 		}
 
 		return false;
