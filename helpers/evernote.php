@@ -124,6 +124,8 @@ class Evernote {
 	function getNoteStore(){
 		// check cache first?
 		//$_SESSION['cache']['evernote']['note']['store']
+		return $this->client->getNoteStore();
+		/*
 		if( empty($_SESSION['cache_evernote_note_store']) ){
 
 			$store = $this->client->getNoteStore();
@@ -135,6 +137,7 @@ class Evernote {
 		}
 
 		return $store;
+		*/
 
 	}
 
@@ -142,6 +145,8 @@ class Evernote {
 	function getUserStore(){
 		// check cache first?
 		//$_SESSION['cache']['evernote']['user']['store']
+		return $this->client->getUserStore();
+		/*
 		if( empty($_SESSION['cache_evernote_user_store']) ){
 
 			$store = $this->client->getUserStore();
@@ -153,6 +158,7 @@ class Evernote {
 		}
 
 		return $store;
+		*/
 
 	}
 
@@ -271,7 +277,7 @@ class Evernote {
 
 		try {
 
-			//$token = $this->creds['oauth_token'];
+			$token = $this->creds['oauth_token'];
 			//$user = $this->getUserStore();
 
 			//$noteStoreUrl = $user->getNoteStoreUrl($token);
