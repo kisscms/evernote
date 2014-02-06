@@ -9,6 +9,7 @@
 /* Evernote for KISSCMS */
 class Evernote {
 
+	public $name = "evernote";
 	private $api;
 	public $oauth;
 	private $config;
